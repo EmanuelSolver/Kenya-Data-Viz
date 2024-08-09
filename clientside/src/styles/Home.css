@@ -1,0 +1,33 @@
+.background-image {
+    background-image: url('https://bernardmarr.com/img/blog/what-is-big-data.png'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    color: white; /* Ensure text is readable on the background */
+    padding: 50px; /* Adjust padding as needed */
+    border-radius: 10px; /* Optional: add rounded corners */
+  }
+  
+  .text-overlay {
+    position: relative;
+    padding: 30px; /* Ensure padding inside the container */
+    text-align: center; /* Center-align h1 text within the container */
+    line-height: 2;
+  }
+  
+  .text-overlay h1 {
+    margin-bottom: 20px; /* Space between h1 and p */
+  }
+  
+  .text-overlay p {
+    float: left; /* Float paragraph to the left */
+    width: 40%; /* Occupy 50% of the width */
+    margin: 0; /* Remove default margin */
+    text-align: left; /* Align text to the left */
+  }
+  
+  .clearfix::after {
+    content: "";
+    display: table;
+    clear: both; /* Clear floats */
+  }
+  
