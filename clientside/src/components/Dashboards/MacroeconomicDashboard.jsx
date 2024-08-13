@@ -1,31 +1,50 @@
-import { Line } from 'react-chartjs-2';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
+import NominalGDPChart from '../Datapoints/NominalGDPChart';
+import PopulationChart from '../Datapoints/PopulationChart';
+import GDPPerCapitaChart from '../Datapoints/GDPPerCapitaChart';
 
+const Dashboard = () => {
+    return (
+        <div className="container-fluid">
+            <div className="row my-4">
+            <h1 className="text-center bg-light p-4 rounded shadow-sm text-primary">
+                Macroeconomics Dashboard
+            </h1>
 
-const MacroeconomicDashboard = () => {
-  const [gdpData, setGdpData] = useState([]);
-  const [populationData, setPopulationData] = useState([]);
-  const [gdpPerCapitaData, setGdpPerCapitaData] = useState([]);
-
-  // Fetch data from backend API
-  useEffect(() => {
-    axios.get('/api/macroeconomic-data')
-      .then(response => {
-        setGdpData(response.data.gdp);
-        setPopulationData(response.data.population);
-        setGdpPerCapitaData(response.data.gdpPerCapita);
-      });
-  }, []);
-
-  return (
-    <div className="container">
-      <h2>Macroeconomic Dashboard</h2>
-      <Line data={gdpData} options={{ title: { display: true, text: 'GDP Data' } }} />
-      <Line data={populationData} options={{ title: { display: true, text: 'Population Data' } }} />
-      <Line data={gdpPerCapitaData} options={{ title: { display: true, text: 'GDP per Capita Data' } }} />
-    </div>
-  );
+            </div>
+            <div className="row">
+                <div className="col-md-6 mb-4">
+                    <div className="card">
+                        <div className="card-header">
+                            Nominal GDP (KE)
+                        </div>
+                        <div className="card-body">
+                            <NominalGDPChart />
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6 mb-4">
+                    <div className="card">
+                        <div className="card-header">
+                            Population (KE)
+                        </div>
+                        <div className="card-body">
+                            <PopulationChart />
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12">
+                    <div className="card">
+                        <div className="card-header">
+                            GDP per Capita (KE)
+                        </div>
+                        <div className="card-body">
+                            <GDPPerCapitaChart />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-export default MacroeconomicDashboard;
+export default Dashboard;

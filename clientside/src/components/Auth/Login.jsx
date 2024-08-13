@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { apiDomain } from '../../utils/utils'
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ContextUser } from '../../context/userContext/userContext';
+
 const Login = () => {
-  const [email, setEmail] = useState('');
+    const { dispatch } = useContext(ContextUser);
+
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,16 +18,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${ apiDomain }/auth/login`, { email, password });
-      localStorage.setItem('token', response.data.token);
+      const res = await axios.post(`${ apiDomain }/accounts/login/`, { username, password });
+
+      dispatch({type: "LOGIN_SUCCESS", payload: res.data});
+
       navigate('/macroeconomic-analysis');
     } catch (err) {
-      setError('Invalid credentials: ', err);
+        toast.error(err)
+        setError('Invalid credentials: ', err);
     }
   };
 
   return (
     <div className="container my-5">
+        <ToastContainer />
+
         <div className="row d-flex align-items-center">
             <div className="col-md-6">
                 <img 
@@ -39,13 +50,13 @@ const Login = () => {
                         <form onSubmit={handleSubmit} className="mt-4">
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email address</label>
+                            <label htmlFor="username" className="form-label">Username</label>
                             <input 
-                                type="email" 
-                                id="email" 
+                                type="text" 
+                                id="username" 
                                 className="form-control" 
-                                value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
+                                value={username} 
+                                onChange={(e) => setUsername(e.target.value)} 
                                 required 
                             />
                             </div>
