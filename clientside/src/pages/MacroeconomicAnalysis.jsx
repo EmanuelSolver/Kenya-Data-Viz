@@ -1,9 +1,9 @@
-import MacroeconomicDashboard from '../components/Dashboards/MacroeconomicDashboard';
+import Dashboard1 from '../components/Dashboards/Dashboard1';
 
 const MacroeconomicAnalysis = () => {
   return (
     <div className="container">
-      <MacroeconomicDashboard />
+      <Dashboard1 />
     </div>
   );
 };

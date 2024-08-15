@@ -22,7 +22,7 @@ const Login = () => {
 
       dispatch({type: "LOGIN_SUCCESS", payload: res.data});
 
-      navigate('/macroeconomic-analysis');
+      navigate('/dashboard');
     } catch (err) {
         toast.error(err)
         setError('Invalid credentials: ', err);

@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { useContext } from 'react';
+import { ContextUser } from '../context/userContext/userContext';
 
-const Navigation = () => (
+const Navigation = () => {
+  const { user, dispatch } = useContext(ContextUser)
+
+    const handleLogout = () =>{
+    
+      dispatch({ type: "LOGOUT"})
+
+  }
+
+  return (
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <Link className="navbar-brand fw-bold" to="/">KenyaDataViz</Link>
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,9 +33,14 @@ const Navigation = () => (
         <li className="nav-item">
           <Link className="nav-link" to="/login">Sign in</Link>
         </li>
+        {user && (
+          <li className="nav-item">
+            <Link className="nav-link alert-danger fw-bold" to="/login" onClick={handleLogout}>LogOut</Link>
+          </li>               
+        )}
       </ul>
     </div>
   </nav>
-);
+)};
 
 export default Navigation;

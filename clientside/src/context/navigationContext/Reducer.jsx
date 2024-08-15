@@ -1,27 +1,27 @@
 
 const Reducer = (state, action) => {
     switch (action.type) {
-        case "HOME":
+        case "PROFILE":
             return{
                 navigator: action.payload,
             }
-        case "NOTIFICATIONS":
+        case "DASHBOARD1":
             return{
                navigator: action.payload,
             }
-        case "PROJECTS":
+        case "DASHBOARD2":
             return{
                 navigator: action.payload,
             }
-        case "FILTER":
+        case "DASHBOARD3":
             return{
                 navigator: action.payload,
             }
-        case "ANALYTICS":
+        case "D3-PAGE1":
             return{
                 navigator: action.payload,
             }
-        case "SETTINGS":
+        case "D3-PAGE2":
                 return{
                     navigator: action.payload,
                 }
