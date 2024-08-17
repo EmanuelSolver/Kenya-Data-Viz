@@ -5,10 +5,10 @@ import GDPPerCapitaChart from '../Datapoints/GDPPerCapitaChart';
 const MacroeconomicsAnalysis = () => {
     return (
         <div className="container-fluid">
-            <div className="row my-5">
-                <h1 className="text-center bg-light p-4 rounded shadow-sm text-primary">
-                    Macroeconomics Dashboard
-                </h1>
+            <div className="row">
+                <h3 className="text-center bg-light p-4 rounded shadow-sm text-primary">
+                    KenyaDataViz Analysis
+                </h3>
             </div>
 
             <div className="row">

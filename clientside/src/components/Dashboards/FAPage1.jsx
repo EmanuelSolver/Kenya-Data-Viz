@@ -9,9 +9,11 @@ ChartJS.register(CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend);
 
 const FinancialAnalysisPage1 = () => {
     const [sharePriceData, setSharePriceData] = useState([]);
+    const [selectedPeriod, setSelectedPeriod] = useState('JULY');
 
-    useEffect(() => {
-        axios.get(`${apiDomain}/financial_analysis/daily_share_prices/`)
+    // Fetch data based on the selected period
+    const fetchData = (period) => {
+        axios.get(`${apiDomain}/financial_analysis/daily_share_prices/`, { params: { period } })
             .then(response => {
                 const data = response.data.share_prices.map(item => ({
                     x: new Date(item['Date']),
@@ -25,7 +27,18 @@ const FinancialAnalysisPage1 = () => {
             .catch(error => {
                 console.error('Error fetching share price data:', error);
             });
-    }, []);
+    };
+
+    // Handle period change and trigger data fetch
+    const handlePeriodChange = (period) => {
+        setSelectedPeriod(period);
+        fetchData(period);
+    };
+
+    // Initial fetch on component mount
+    useEffect(() => {
+        fetchData(selectedPeriod);
+    }, [selectedPeriod]);
 
     const chartData = {
         datasets: [
@@ -98,7 +111,11 @@ const FinancialAnalysisPage1 = () => {
 
     return (
         <div className="my-4" style={{ width: "80vw" }}>
-            <h2 className="text-center">Safaricom Share Prices (From July)</h2>
+            <h2 className="text-center">Safaricom Share Prices</h2>
+            <div className="text-center mb-4">
+                <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('2M')}>Last 2M</button>
+                <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('5D')}>Last 5D</button>
+            </div>
             <Line data={chartData} options={options} />
         </div>
     );

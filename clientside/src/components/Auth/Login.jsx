@@ -10,24 +10,25 @@ import { ContextUser } from '../../context/userContext/userContext';
 const Login = () => {
     const { dispatch } = useContext(ContextUser);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${ apiDomain }/accounts/login/`, { username, password });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+        const res = await axios.post(`${ apiDomain }/accounts/login/`, { username, password });
 
-      dispatch({type: "LOGIN_SUCCESS", payload: res.data});
+        dispatch({type: "LOGIN_SUCCESS", payload: res.data});
+        console.log("Token data: ", res.data)
 
-      navigate('/dashboard');
-    } catch (err) {
-        toast.error(err)
-        setError('Invalid credentials: ', err);
-    }
-  };
+        navigate('/dashboard');
+        } catch (err) {
+            toast.error(err)
+            setError('Invalid credentials: ', err);
+        }
+    };
 
   return (
     <div className="container my-5">
@@ -46,8 +47,8 @@ const Login = () => {
             <div className="col-md-6">
                 <div className="card">
                     <div className="card-body">
-                        <h2 className="card-title text-center">Login</h2>
-                        <form onSubmit={handleSubmit} className="mt-4">
+                    <h2 className="card-title text-center fw-bold"><i>Login!</i></h2>
+                    <form onSubmit={handleSubmit} className="mt-4">
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
                             <label htmlFor="username" className="form-label">Username</label>

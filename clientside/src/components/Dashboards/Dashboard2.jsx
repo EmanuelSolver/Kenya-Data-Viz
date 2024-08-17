@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { apiDomain } from '../../utils/utils';
@@ -28,12 +28,12 @@ ChartJS.register(
 
 const Dashboard2 = () => {
     const [exchangeRatesData, setExchangeRatesData] = useState([]);
+    const [selectedPeriod, setSelectedPeriod] = useState('8Y');
 
-    useEffect(() => {
-        axios.get(`${apiDomain}/macroeconomics/exchange_rates/`)
+    const fetchData = (period) => {
+        axios.get(`${apiDomain}/macroeconomics/exchange_rates/`, { params: { period } })
             .then(response => {
                 if (response.data && response.data.exchange_rates) {
-                    console.log(response.data.exchange_rates)
                     setExchangeRatesData(response.data.exchange_rates);
                 } else {
                     console.error('Unexpected data format:', response.data);
@@ -42,7 +42,15 @@ const Dashboard2 = () => {
             .catch(error => {
                 console.error('Error fetching exchange rate data:', error);
             });
-    }, []);
+    };
+
+
+
+    const handlePeriodChange = (period) => {
+        setSelectedPeriod(period);
+        // Fetch data for the selected period
+        fetchData(selectedPeriod);
+    };
 
     const chartData = {
         labels: exchangeRatesData.map(item => item.Date), // Dates
@@ -102,14 +110,23 @@ const Dashboard2 = () => {
         }
     };
 
+    useEffect(() =>{
+        fetchData();
+    }, [])
+
     return (
-        <div className="container-fluid"  style={{width: "80vw"}}>
+        <div className="container-fluid" style={{ width: '80vw' }}>
             <div className="row">
                 <div className="col-md-12 mb-4">
-                    <h2 className="text-center">USD/KES Exchange Rate(2019 - 2024)</h2>
-
+                    <h2 className="text-center">USD/KES Exchange Rate</h2>
+                    <div className="text-center mb-4">
+                        <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('5Y')}>Last 5Y</button>
+                        <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('2Y')}>Last 2Y</button>
+                        <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('YTD')}>YTD</button>
+                        <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('3M')}>Last 3M</button>
+                        <button className="btn btn-primary mx-2" onClick={() => handlePeriodChange('1M')}>Last 1M</button>
+                    </div>
                     <Line data={chartData} options={chartOptions} />
-
                 </div>
             </div>
         </div>

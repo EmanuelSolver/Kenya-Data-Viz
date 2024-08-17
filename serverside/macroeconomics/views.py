@@ -3,10 +3,9 @@ from django.conf import settings
 import requests
 from django.http import JsonResponse
 import logging
-from datetime import datetime
 import pandas as pd
 from django.http import JsonResponse
-
+from datetime import datetime, timedelta
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -78,39 +77,51 @@ def fetch_gdp_per_capita_data(request):
         return JsonResponse({'error': f'Error fetching GDP per capita data: {str(e)}'}, status=500)
 
 
-
 def get_file_path(file_name):
     return os.path.join(settings.BASE_DIR, 'static', 'data', file_name)
 
+
 def fetch_exchange_rates_view(request):
+    period = request.GET.get('period', '8Y')
     try:
         file_path = get_file_path('historical_exchange_rates.csv')
-        # Load CSV data into a DataFrame
         df = pd.read_csv(file_path)
-        # Convert the Date column to datetime format
         df['Date'] = pd.to_datetime(df['Date'], errors='coerce', format='%Y-%m-%d')
-
-        # Drop rows with invalid dates
         df = df.dropna(subset=['Date'])
-
-        # Define the start date for filtering (January 1, 2019)
-        start_date = datetime(2019, 1, 1)
-
-        # Filter for USD and dates from 2019 to the present
+        start_date = datetime(2015, 1, 1)
         filtered_df = df[(df['Currency'] == 'US DOLLAR') & (df['Date'] >= start_date)]
 
-        # Select relevant columns
+        if period == '8Y':
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=8*365)
+        elif period == '5Y':
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=5*365)
+        elif period == '2Y':
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=2*365)
+        elif period == 'YTD':
+            end_date = datetime.now()
+            start_date = datetime(end_date.year, 1, 1)
+        elif period == '3M':
+            end_date = datetime.now()
+            start_date = datetime(2023, 11, 1)
+        elif period == '1M':
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=30)
+        else:
+            # Default to 5Y if period is not recognized
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=5*365)
+
+        filtered_df = filtered_df[(filtered_df['Date'] >= start_date) & (filtered_df['Date'] <= end_date)]
         filtered_df = filtered_df[['Date', 'Mean']]
-        
-        # Reset index for a clean output
         filtered_df.reset_index(drop=True, inplace=True)
-        
+
         if filtered_df.empty:
             return JsonResponse({'error': 'No USD exchange rate data found for the specified period.'}, status=404)
         
-        # Output the filtered data
         data = filtered_df.to_dict(orient='records')
-        
         return JsonResponse({'exchange_rates': data})
 
     except FileNotFoundError as e:
@@ -124,6 +135,8 @@ def fetch_exchange_rates_view(request):
 
 
 def fetch_inflation_data_view(request):
+    period = request.GET.get('period', 'YTD')
+
     try:
         file_path = get_file_path('historical_inflation_rates.csv')
         df = pd.read_csv(file_path)
@@ -133,9 +146,21 @@ def fetch_inflation_data_view(request):
 
         # Create a 'Date' column from 'Year' and 'Month'
         df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(DAY=1))
+        
+        if period == 'YTD':
+            end_date = datetime.now()
+            start_date = datetime(end_date.year, 1, 1)
+        elif period == '1M':
+            end_date = datetime.now()
+            start_date = datetime(end_date.year, 6, 1)
+        elif period == '3M':
+            end_date = datetime.now()
+            start_date = datetime(end_date.year, 5, 1)
 
         # Select relevant columns
         df = df[['Date', 'Annual_Average_Inflation', '12_Month_Inflation']]
+        df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+
        
         # Prepare the data for frontend
         inflation_data = df.to_dict(orient='records')

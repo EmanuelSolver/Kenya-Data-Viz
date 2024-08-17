@@ -17,6 +17,8 @@ ChartJS.register(
 
 const NominalGDPChart = () => {
     const [gdpData, setGdpData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const [selectedRange, setSelectedRange] = useState('full'); 
 
     useEffect(() => {
         axios.get(`${apiDomain}/macroeconomics/gdp/`)
@@ -26,6 +28,7 @@ const NominalGDPChart = () => {
                     date: item.date,
                     value: item.value
                 }));
+                setFilteredData(formattedData);
                 setGdpData(formattedData);
             })
             .catch(error => {
@@ -33,12 +36,37 @@ const NominalGDPChart = () => {
             });
     }, []);
 
+    useEffect(() => {
+        filterData(selectedRange);
+    }, [selectedRange, gdpData]);
+
+    const filterData = (range) => {
+        const today = new Date();
+        const year = today.getFullYear();
+        let filtered;
+
+        switch (range) {
+            case '5y':
+                filtered = gdpData.filter(item => new Date(item.date).getFullYear() >= (year - 5));
+                break;
+            case '10y':
+                filtered = gdpData.filter(item => new Date(item.date).getFullYear() >= (year - 10));
+                break;
+            case 'full':
+            default:
+                filtered = gdpData;
+                break;
+        }
+
+        setFilteredData(filtered);
+    };
+
     const chartData = {
-        labels: gdpData.map(item => item.date), // Using 'date' for labels
+        labels: filteredData.map(item => item.date), // Using 'date' for labels
         datasets: [
             {
                 label: 'Nominal GDP',
-                data: gdpData.map(item => item.value), // Using 'value' for data
+                data: filteredData.map(item => item.value), // Using 'value' for data
                 borderColor: 'rgba(75,192,192,1)',
                 borderWidth: 1,
                 fill: false
@@ -82,8 +110,13 @@ const NominalGDPChart = () => {
     };
 
     return (
-        <div>
-            <h2>Historical Nominal GDP of Kenya</h2>
+        <div className='container-fluid'>
+            <h2>Nominal GDP of Kenya</h2>
+            <div className="d-flex justify-content-center mb-3">
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('5y')}>Last 5 Years</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('10y')}>Last 10 Years</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('full')}>Full Dataset</button>
+            </div>
             <Line data={chartData} options={options} />
         </div>
     );

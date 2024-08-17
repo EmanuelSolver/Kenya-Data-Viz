@@ -58,7 +58,7 @@ const Register = () => {
 
           <div className="card">
             <div className="card-body">
-              <h2 className="card-title text-center">Register</h2>
+              <h2 className="card-title text-center fw-bold"><i>Register!</i></h2>
               <form onSubmit={formik.handleSubmit} className="mt-4">
                 {formik.errors && formik.touched && (
                   <div className="alert">{formik.errors.general}</div>
@@ -146,13 +146,11 @@ const Register = () => {
                   </div>
                 </div>
 
-                <div className="row mb-3">
-                  <div className="col-md-6">
+                <div className="text-center">
+                  <div >
                     <button type="submit" className="btn btn-primary w-100">Register Free</button>
                   </div>
-                  <div className="col-md-6">
-                    <Link to="/payment" className="btn btn-secondary w-100 text-decoration-none">Pay Premium</Link>
-                  </div>
+
                 </div>
 
                 <div className="text-center">

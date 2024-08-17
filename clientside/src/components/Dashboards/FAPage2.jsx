@@ -5,30 +5,50 @@ import { Chart as ChartJS, CategoryScale, LinearScale, Title, Tooltip, Legend, T
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { apiDomain } from '../../utils/utils';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Payment from '../../pages/Payment'
+
 
 ChartJS.register(CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend);
 
 const FinancialAnalysisPage2 = ({ isFullMember }) => {
     const [sharePriceData, setSharePriceData] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedPeriod, setSelectedPeriod] = useState('3M'); // Default to 3M
+
 
     useEffect(() => {
         if (isFullMember) {
-            axios.get(`${apiDomain}/financial_analysis/all_share_prices/`)
-                .then(response => {
-                    const data = response.data.share_prices.map(item => ({
-                        x: new Date(item['Date']),  // Use bracket notation for keys with quotes
-                        open: item[' Open'],           // Adjust spacing if the keys have leading spaces
-                        high: item[' High'],           // Adjust spacing if the keys have leading spaces
-                        low: item[' Low'],            // Adjust spacing if the keys have leading spaces
-                        close: item[' Close'], 
-                    }));
-                    setSharePriceData(data);
-                })
-                .catch(error => {
-                    console.error('Error fetching share price data:', error);
-                });
+            axios.get(`${apiDomain}/financial_analysis/all_share_prices/`, {
+                params: { period: selectedPeriod }  // Pass the selected period as a query parameter
+            })
+            .then(response => {
+                const data = response.data.share_prices.map(item => ({
+                    x: new Date(item['Date']),
+                    open: item[' Open'],
+                    high: item[' High'],
+                    low: item[' Low'],
+                    close: item[' Close'],
+                }));
+                setSharePriceData(data);
+            })
+            .catch(error => {
+                console.error('Error fetching share price data:', error);
+            });
         }
-    }, [isFullMember]);
+    }, [isFullMember, selectedPeriod]); // Fetch data when isFullMember or selectedPeriod changes
+
+
+    // Function to toggle modal visibility
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    };
+
+    // Function to handle period selection
+    const handlePeriodChange = (period) => {
+        setSelectedPeriod(period);
+    };
 
     const chartData = {
         datasets: [
@@ -100,20 +120,39 @@ const FinancialAnalysisPage2 = ({ isFullMember }) => {
     };
 
     return (
-        <div className="my-4">
+        <div className="my-4"  style={{ width: "80vw" }}>
             {isFullMember ? (
-                <div style={{ width: "80vw" }}>
-                    <h2 className="text-center">Safaricom Share Prices (From June 2024)</h2>
+                <div>
+                    <h2 className="text-center">Safaricom Share Prices</h2>
+                    <div className="mb-4 text-center">
+                        <button onClick={() => handlePeriodChange('3M')} className="btn btn-primary mx-2">Last 3M</button>
+                        <button onClick={() => handlePeriodChange('1M')} className="btn btn-primary mx-2">Last 1M</button>
+                        <button onClick={() => handlePeriodChange('5D')} className="btn btn-primary mx-2">Last 5D</button>
+                    </div>
                     <Line data={chartData} options={options} />
                 </div>
             ) : (
                 <div className="text-center">
-                    <h2>This content is only accessible to full members.</h2>
-                    <button className="btn btn-primary mt-4">
-                        Click here to become a full member
-                    </button>
+                    <h2 className="mt-5">This content is only accessible to full members.</h2>
+                    <div>
+                        <button className="btn btn-primary mt-4" onClick={toggleModal}>Become full member</button>
+                    </div>
                 </div>
             )}
+
+            {/* Make Payment to become a full member */}
+            <Modal show={showModal} onHide={toggleModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Premium package</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Payment />
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={toggleModal}>Close</Button>
+                    </Modal.Footer>
+            </Modal>
         </div>
     );
 };

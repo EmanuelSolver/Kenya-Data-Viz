@@ -38,18 +38,17 @@ const Payment = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div className="w-75">
+    <div className="container d-flex justify-content-center align-items-center">
+      <div >
         <div className="card">
           <div className="card-body">
-            <h2 className="card-title text-center">Payment</h2>
             {success ? (
               <div className="alert alert-success">Payment successful! You now have access to premium content.</div>
             ) : (
               <>
-                <form onSubmit={handlePayment} className="mt-4">
+                <form onSubmit={handlePayment}>
                   {error && <div className="alert alert-danger">{error}</div>}
-
+                  <h4 className='text-center my-4'><i>Become a full member Today!</i></h4>
                   {/* Payment Method Selection */}
                   <div className="mb-3">
                     <label htmlFor="paymentMethod" className="form-label">Payment Method</label>

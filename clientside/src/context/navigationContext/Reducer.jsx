@@ -25,6 +25,18 @@ const Reducer = (state, action) => {
                 return{
                     navigator: action.payload,
                 }
+        case "FINANCIALANALYSIS":
+            return{
+                navigator: action.payload,
+            }
+        case "FA-PAGE1":
+            return{
+                navigator: action.payload,
+            }
+        case "FA-PAGE2":
+                return{
+                    navigator: action.payload,
+                }
         default:
             return state;
     }

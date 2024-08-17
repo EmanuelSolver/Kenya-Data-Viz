@@ -4,7 +4,6 @@ const Dashboard3 = () => {
 
   return (
     <div className="container">
-      <h2>Financial Dashboard3</h2>
       <div className="row">
           <D3Page1 />
        </div>

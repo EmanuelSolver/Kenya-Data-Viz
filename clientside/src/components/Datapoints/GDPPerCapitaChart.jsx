@@ -4,38 +4,63 @@ import { Line } from 'react-chartjs-2';
 import { apiDomain } from '../../utils/utils';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 
-// Register necessary components of Chart.js, including the Filler plugin
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, Filler);
 
 const GDPPerCapitaChart = () => {
     const [gdpPerCapitaData, setGdpPerCapitaData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const [selectedRange, setSelectedRange] = useState('full'); // default to full dataset
 
     useEffect(() => {
-        axios.get(`${ apiDomain }/macroeconomics/gdp-per-capita/`)
+        axios.get(`${apiDomain}/macroeconomics/gdp-per-capita/`)
             .then(response => {
                 setGdpPerCapitaData(response.data);
+                setFilteredData(response.data); // initially set to full data
             })
             .catch(error => {
                 console.error('Error fetching GDP per Capita data:', error);
             });
     }, []);
 
-    // Prepare chart data
+    useEffect(() => {
+        filterData(selectedRange);
+    }, [selectedRange, gdpPerCapitaData]);
+
+    const filterData = (range) => {
+        const today = new Date();
+        const year = today.getFullYear();
+        let filtered;
+
+        switch(range) {
+            case '5y':
+                filtered = gdpPerCapitaData.filter(item => new Date(item.date).getFullYear() >= (year - 5));
+                break;
+            case '10y':
+                filtered = gdpPerCapitaData.filter(item => new Date(item.date).getFullYear() >= (year - 10));
+                break;
+            case 'full':
+            default:
+                filtered = gdpPerCapitaData;
+                break;
+        }
+
+        setFilteredData(filtered);
+    };
+
     const chartData = {
-        labels: gdpPerCapitaData.map(item => item.date), // X-axis labels (years)
+        labels: filteredData.map(item => item.date),
         datasets: [
             {
                 label: 'GDP per Capita',
-                data: gdpPerCapitaData.map(item => item.value), // Y-axis data (GDP per capita values)
+                data: filteredData.map(item => item.value),
                 borderColor: 'rgba(255,99,132,1)',
                 backgroundColor: 'rgba(255,99,132,0.2)',
                 borderWidth: 2,
-                fill: true // Enable area filling
+                fill: true 
             }
         ]
     };
 
-    // Chart options
     const options = {
         responsive: true,
         plugins: {
@@ -72,8 +97,13 @@ const GDPPerCapitaChart = () => {
     };
 
     return (
-        <div>
-            <h2>Historical GDP per Capita of Kenya</h2>
+        <div className='container-fluid'>
+            <h2 >GDP per Capita of Kenya</h2>
+            <div className="d-flex justify-content-center mb-3">
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('5y')}>Last 5 Years</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('10y')}>Last 10 Years</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('full')}>Full Dataset</button>
+            </div>
             <Line data={chartData} options={options} />
         </div>
     );
