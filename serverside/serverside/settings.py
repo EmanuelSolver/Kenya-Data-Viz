@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     "accounts",
     "macroeconomics",
     "financialanalysis",
-    "payments",
+    "stripepayment",
+    "mpesapayment",
 ]
 
 
@@ -227,10 +228,15 @@ LOGGING = {
 
 
 
-
+# stripe env variables
 STRIPE_TEST_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+#mpesa env variables
+CONSUMER_KEY = config('CONSUMER_KEY')
+CONSUMER_SECRET = config('CONSUMER_SECRET')
+PASS_KEY = config('PASS_KEY')
+BUSINESS_SHORT_CODE = config('BUSINESS_SHORT_CODE')
 
 

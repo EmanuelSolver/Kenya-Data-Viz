@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Form, Alert, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import { apiDomain } from '../../utils/utils';
@@ -9,6 +9,22 @@ const MobileMoneyForm = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [csrfToken, setCsrfToken] = useState('');
+
+    useEffect(() => {
+        const fetchCsrfToken = async () => {
+          try {
+            const response = await axios.get(`${apiDomain}/payment/get-csrf-token/`);
+            setCsrfToken(response.data.csrfToken);
+          } catch (error) {
+            console.error('Failed to fetch CSRF token:', error);
+            setError('Failed to fetch CSRF token. Please try again.');
+          }
+        };
+    
+        fetchCsrfToken();
+      }, []);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -16,8 +32,9 @@ const MobileMoneyForm = () => {
 
         try {
             const response = await axios.post(
-                `${apiDomain}/payment/process-mobile-money/`,
-                { phone_number: phoneNumber, amount: amount }
+                `${apiDomain}/mpesa/process-stk-push/`,
+                { phone_number: phoneNumber, amount: amount },
+                { headers: { 'X-CSRFToken': csrfToken } }
             );
 
             if (response.data.error) {
@@ -37,7 +54,7 @@ const MobileMoneyForm = () => {
 
     return (
         <Form onSubmit={handleSubmit} className="mobile-money-form">
-            <h3>Pay via Mobile Money (M-Pesa)</h3>
+            <h3>Pay via M-Pesa</h3>
             
             <Form.Group controlId="phoneNumber" className="mb-3">
                 <Form.Label>Phone Number</Form.Label>
