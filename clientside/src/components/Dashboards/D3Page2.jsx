@@ -6,7 +6,7 @@ import { apiDomain } from '../../utils/utils';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Payment from '../../pages/Payment'
+import Paywall from '../Payments/Paywall'
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
@@ -126,7 +126,7 @@ const D3Page2 = ({isFullMember}) => {
                         <Modal.Title>Premium package</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Payment />
+                        <Paywall />
 
                     </Modal.Body>
                     <Modal.Footer>

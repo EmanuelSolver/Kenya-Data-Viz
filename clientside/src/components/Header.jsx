@@ -12,7 +12,9 @@ const Navigation = () => {
 
     const handleLogout = () => {
         dispatch({ type: "LOGOUT" });
+        localStorage.removeItem('subscription'); // Corrected method to remove item from localStorage
     };
+    
 
     const toggleMenu = () => {
         setIsMenuOpen(prevState => !prevState);

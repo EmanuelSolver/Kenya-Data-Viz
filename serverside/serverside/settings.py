@@ -1,6 +1,8 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,7 +17,8 @@ SECRET_KEY = "django-insecure-b1ab8sd$ah(m-j0vf%q*ssgt0&x0y8%3v@3)ekr(-vboj)4*q$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -28,11 +31,38 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "csp",
     "corsheaders",
     "accounts",
     "macroeconomics",
     "financialanalysis",
+    "payments",
 ]
+
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'unsafe-eval'",
+    "https://js.stripe.com",       # Allow scripts from Stripe
+    "https://newassets.hcaptcha.com",  # Allow hCaptcha if needed
+    "https://polyfill.io",
+    "blob:",                       # Allow blob URLs
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "https://fonts.googleapis.com"
+)
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://js.stripe.com",       # Allow if Stripe embeds frames
+)
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://api.stripe.com",      # Allow connections to Stripe's API
+)
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -44,11 +74,21 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
+
 ]
 
+
+
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # or wherever your React frontend is served from
+    'http://localhost:5173',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Configure REST Framework
 REST_FRAMEWORK = {
@@ -149,6 +189,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -182,5 +224,13 @@ LOGGING = {
         },
     },
 }
+
+
+
+
+STRIPE_TEST_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+
 
 

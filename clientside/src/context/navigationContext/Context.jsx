@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer } from "react";
 import Reducer from './Reducer'
 
 const INITIAL_STATE ={
-    navigator: JSON.parse(localStorage.getItem("navigator")) || "home",
+    navigator: JSON.parse(localStorage.getItem("navigator")) || "profile",
 }
 
 export const Context = createContext(INITIAL_STATE);

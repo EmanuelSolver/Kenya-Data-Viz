@@ -12,6 +12,7 @@ const Reducer = (state, action) => {
         case "LOGOUT":
             return{
                 user: null,
+                subscription: null
             }
         default:
             return state;

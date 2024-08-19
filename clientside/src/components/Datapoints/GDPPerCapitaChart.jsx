@@ -100,8 +100,8 @@ const GDPPerCapitaChart = () => {
         <div className='container-fluid'>
             <h2 >GDP per Capita of Kenya</h2>
             <div className="d-flex justify-content-center mb-3">
-                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('5y')}>Last 5 Years</button>
-                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('10y')}>Last 10 Years</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('5y')}>Last 5Y</button>
+                <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('10y')}>Last 10Y</button>
                 <button className="btn btn-primary mx-2" onClick={() => setSelectedRange('full')}>Full Dataset</button>
             </div>
             <Line data={chartData} options={options} />
