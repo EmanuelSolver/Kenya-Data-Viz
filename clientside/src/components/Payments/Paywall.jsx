@@ -12,6 +12,7 @@ const Paywall = () => {
     const [discountCode, setDiscountCode] = useState('');
     const [discountError, setDiscountError] = useState('');
     const [isPaymentMethodSelected, setIsPaymentMethodSelected] = useState(false);
+    const [discountAmount, setDiscountAmount] = useState(null);
     const { user } = useContext(ContextUser);
 
     useEffect(() => {
@@ -41,9 +42,11 @@ const Paywall = () => {
                 user_id: user.user_data.id,
                 code: discountCode
             });
+            console.log("verification data: ", response.data);
 
             if (response.data.valid) {
                 // Apply the discount and update subscription status
+                setDiscountAmount(response.data.discount_amount); // Set the discount amount
                 localStorage.setItem('subscription', 'active');
                 setIsFullMember(true);
                 setIsPaymentMethodSelected(true);
@@ -68,6 +71,9 @@ const Paywall = () => {
                     <Col md={6}>
                         <div className="alert alert-success" role="alert">
                             You are now a full member!
+                            {discountAmount !== null && (
+                                <p>You received a discount of Ksh.{discountAmount}</p>
+                            )}
                         </div>
                     </Col>
                 </Row>

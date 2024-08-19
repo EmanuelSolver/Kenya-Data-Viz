@@ -133,7 +133,9 @@ class CouponVerifyView(APIView):
             # Update or create subscription
             subscription, created = Subscription.objects.get_or_create(user=user)
             subscription.is_active = True
-            subscription.expiry_date = timezone.now() + timezone.timedelta(days=30)  # Assuming 30 days validity
+            subscription.start_date = timezone.now()  
+            subscription.end_date =  timezone.now() + timezone.timedelta(days=30)
+            
             subscription.save()
             
             return JsonResponse({'valid': True, 'discount_amount': coupon.discount_amount})
